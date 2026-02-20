@@ -164,12 +164,12 @@ function initScrollAnimations() {
 }
 
 // ================================
-// Contact Form
+// Contact Form (Web3Forms Integration)
 // ================================
 function initContactForm() {
     const form = document.getElementById('contactForm');
     
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         // Get form data
@@ -184,18 +184,32 @@ function initContactForm() {
             return;
         }
 
-        // Simulate form submission
+        // Show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        setTimeout(() => {
-            showNotification('Message sent successfully!', 'success');
-            form.reset();
+        try {
+            const response = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
+                form.reset();
+            } else {
+                showNotification('Something went wrong. Please try again.', 'error');
+            }
+        } catch (error) {
+            showNotification('Network error. Please check your connection and try again.', 'error');
+        } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 1500);
+        }
     });
 }
 
