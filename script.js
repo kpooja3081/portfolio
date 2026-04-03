@@ -47,7 +47,7 @@ function initNavigation() {
             e.preventDefault();
             const targetId = link.getAttribute('href');
             const targetSection = document.querySelector(targetId);
-            
+
             if (targetSection) {
                 targetSection.scrollIntoView({
                     behavior: 'smooth',
@@ -59,16 +59,16 @@ function initNavigation() {
 
     // Active link highlighting
     const sections = document.querySelectorAll('section[id]');
-    
+
     window.addEventListener('scroll', () => {
         const scrollY = window.pageYOffset;
-        
+
         sections.forEach(section => {
             const sectionHeight = section.offsetHeight;
             const sectionTop = section.offsetTop - 100;
             const sectionId = section.getAttribute('id');
             const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-            
+
             if (navLink) {
                 if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
                     navLink.classList.add('active');
@@ -91,7 +91,7 @@ function initTypingAnimation() {
         'Embedded Systems Specialist',
         'Deep Learning Enthusiast'
     ];
-    
+
     let titleIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -99,7 +99,7 @@ function initTypingAnimation() {
 
     function type() {
         const currentTitle = titles[titleIndex];
-        
+
         if (isDeleting) {
             typingElement.textContent = currentTitle.substring(0, charIndex - 1);
             charIndex--;
@@ -164,20 +164,20 @@ function initScrollAnimations() {
 }
 
 // ================================
-// Contact Form (Web3Forms Integration)
+// Contact Form (Formsubmit.co Integration)
 // ================================
 function initContactForm() {
     const form = document.getElementById('contactForm');
-    
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         // Get form data
         const formData = new FormData(form);
         const name = formData.get('name');
         const email = formData.get('email');
         const message = formData.get('message');
-        
+
         // Simple validation
         if (!name || !email || !message) {
             showNotification('Please fill in all fields', 'error');
@@ -191,14 +191,15 @@ function initContactForm() {
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch('https://api.web3forms.com/submit', {
+            const response = await fetch(form.action, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
             });
 
-            const result = await response.json();
-
-            if (result.success) {
+            if (response.ok) {
                 showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
                 form.reset();
             } else {
