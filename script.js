@@ -169,48 +169,33 @@ function initScrollAnimations() {
 function initContactForm() {
     const form = document.getElementById('contactForm');
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    // Check if returning from successful form submission
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true') {
+        showNotification('Message sent successfully! I\'ll get back to you soon. 🎉', 'success');
+        // Clean the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
-        // Get form data
-        const formData = new FormData(form);
-        const name = formData.get('name');
-        const email = formData.get('email');
-        const message = formData.get('message');
+    // Form validation before native submit
+    form.addEventListener('submit', (e) => {
+        const name = form.querySelector('#name').value.trim();
+        const email = form.querySelector('#email').value.trim();
+        const message = form.querySelector('#message').value.trim();
 
-        // Simple validation
         if (!name || !email || !message) {
+            e.preventDefault();
             showNotification('Please fill in all fields', 'error');
             return;
         }
 
-        // Show loading state
+        // Show loading state (form will submit natively)
         const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Sending...';
         submitBtn.disabled = true;
 
-        try {
-            const response = await fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-                form.reset();
-            } else {
-                showNotification('Something went wrong. Please try again.', 'error');
-            }
-        } catch (error) {
-            showNotification('Network error. Please check your connection and try again.', 'error');
-        } finally {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+        // Let the form submit natively to FormSubmit.co
+        // FormSubmit will handle verification and redirect back via _next
     });
 }
 
