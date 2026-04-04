@@ -625,14 +625,7 @@
                         </div>
                     </a>
                 </div>
-                <form class="contact-form glass-card" id="contactForm"
-                    action="https://formsubmit.co/kpooja3081@gmail.com" method="POST">
-                    <!-- Formsubmit.co Configuration -->
-                    <input type="hidden" name="_subject" value="New Contact from Portfolio Website">
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_next" value="https://kpooja3081.github.io/portfolio/?success=true">
-                    <input type="hidden" name="_template" value="table">
-                    <input type="text" name="_honey" style="display: none;">
+                <form class="contact-form glass-card" id="contactForm" onsubmit="return false;">
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input type="text" id="name" name="name" required placeholder="Your Name">
@@ -646,7 +639,7 @@
                         <textarea id="message" name="message" rows="5" required
                             placeholder="Your message..."></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">Send Message</button>
+                    <button type="submit" class="btn btn-primary btn-full" id="sendMessageBtn">Send Message</button>
                 </form>
             </div>
         </div>

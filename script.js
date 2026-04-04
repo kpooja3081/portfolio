@@ -164,38 +164,53 @@ function initScrollAnimations() {
 }
 
 // ================================
-// Contact Form (Formsubmit.co Integration)
+// Contact Form (Direct mailto: — no third-party service needed)
 // ================================
 function initContactForm() {
     const form = document.getElementById('contactForm');
+    const sendBtn = document.getElementById('sendMessageBtn');
 
-    // Check if returning from successful form submission
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('success') === 'true') {
-        showNotification('Message sent successfully! I\'ll get back to you soon. 🎉', 'success');
-        // Clean the URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    sendBtn.addEventListener('click', (e) => {
+        e.preventDefault();
 
-    // Form validation before native submit
-    form.addEventListener('submit', (e) => {
         const name = form.querySelector('#name').value.trim();
         const email = form.querySelector('#email').value.trim();
         const message = form.querySelector('#message').value.trim();
 
         if (!name || !email || !message) {
-            e.preventDefault();
             showNotification('Please fill in all fields', 'error');
             return;
         }
 
-        // Show loading state (form will submit natively)
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.textContent = 'Sending...';
-        submitBtn.disabled = true;
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showNotification('Please enter a valid email address', 'error');
+            return;
+        }
 
-        // Let the form submit natively to FormSubmit.co
-        // FormSubmit will handle verification and redirect back via _next
+        // Build mailto link with pre-filled subject and body
+        const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+        const body = encodeURIComponent(
+            `Hi Pooja,\n\n` +
+            `You have a new message from your portfolio website.\n\n` +
+            `Name: ${name}\n` +
+            `Email: ${email}\n\n` +
+            `Message:\n${message}\n`
+        );
+
+        const mailtoLink = `mailto:kpooja3081@gmail.com?subject=${subject}&body=${body}`;
+
+        // Open mailto link
+        window.location.href = mailtoLink;
+
+        // Show success notification
+        showNotification('Opening your email client... Send the email to reach me! 📧', 'success');
+
+        // Reset form after a short delay
+        setTimeout(() => {
+            form.reset();
+        }, 1000);
     });
 }
 
